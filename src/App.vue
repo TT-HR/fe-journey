@@ -14,14 +14,14 @@ onMounted(async() =>{
     const data = await res.json();
     todo.value = data.title;
   }catch (e){
-    todo.value = 'fatch failed'
+    todo.value = 'fetch failed'
   }
 })
 </script>
 
 <template>
   <div class="min-h-screen grid place-items-center bg-gray-50">
-    <div calss ="p-6 rounded-2xl shadow-lg bg-white space-y-4 space-y-4 w-full max-w-md">
+    <div class ="p-6 rounded-2xl shadow-lg bg-white space-y-4 space-y-4 w-full max-w-md">
       <h1 class ="text-2xl font-bold">Hello Vue 3 + TS + Tailwind</h1>
       <p class = "text-sm opacity-80">Todo:{{ todo }}</p>
       <button class ="px-3 py-1 rounded-2xl shadow" @click="add">+1</button>
@@ -30,17 +30,6 @@ onMounted(async() =>{
   </div>
 </template>
 
-<style scoped>
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.vue:hover {
-  filter: drop-shadow(0 0 2em #42b883aa);
-}
+<style>
+
 </style>
