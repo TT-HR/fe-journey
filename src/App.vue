@@ -45,7 +45,7 @@ function toggleTodo(todo:ToDo){
 </script>
 
 <template>
-  <div class="min-h-svh grid place-items-start bg-gray-50">
+  <div class="min-h-full grid place-items-start bg-gray-50">
     <div class ="p-6 rounded-2xl shadow-lg bg-white space-y-4 space-y-4 w-full max-w-md">
       <h1 class ="text-2xl font-bold">Hello Vue 3 + TS + Tailwind</h1>
       <p class = "text-sm opacity-80">Todo:{{ todo }}</p>
@@ -53,17 +53,28 @@ function toggleTodo(todo:ToDo){
       <span class="text-xl font-mono">count:{{count}}</span>
     </div>
   </div>
-  <div>
-    <div>
-      <h1 class="text-2xl font-bold">TO-DO LIST</h1>
 
-      <input v-model="newToDo" placeholder="请输入任务"></input>
-      <button @click="addToDo">add</button>
+  <div class="min-h-screen bg-gray-100 flex items-center justify-center">
+    <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md space-y-4">
+      <h1 class="text-2xl font-bold">TO-DO LIST</h1>
+      <div class="flex gap-2">
+        <input class="flex-1 border rounded px-2 py-1" v-model="newToDo" 
+        @keyup.enter="addToDo"
+        placeholder="请输入任务"></input>
+        <button @click="addToDo" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">add</button>
+      </div>
+
+      <ul class="space-y-2">
+        <li v-for="todo in todos"
+        :key="todo.id"
+        @click="toggleTodo(todo)"
+        class="cursor-pointer">
+        <span :class="{'line-through text-gray-400': todo.done}">{{todo.title}}</span>
+        </li>
+      </ul>
     </div>
     
-    <ul class="space-y-2">
-      <li></li>
-    </ul>
+
   </div>
 </template>
 
