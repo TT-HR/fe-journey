@@ -42,21 +42,27 @@ function toggleTodo(todo:ToDo){
   todo.done = !todo.done
 }
 
+function del(id:any){
+  todos.value.splice(todos.value.indexOf(id),1)
+}
+
 </script>
 
 <template>
-  <div class="min-h-full grid place-items-start bg-gray-50">
+  <!-- <div class="min-h-full grid place-items-start bg-gray-50">
     <div class ="p-6 rounded-2xl shadow-lg bg-white space-y-4 space-y-4 w-full max-w-md">
       <h1 class ="text-2xl font-bold">Hello Vue 3 + TS + Tailwind</h1>
       <p class = "text-sm opacity-80">Todo:{{ todo }}</p>
       <button class ="px-3 py-1 rounded-2xl shadow" @click="add">+1</button>
       <span class="text-xl font-mono">count:{{count}}</span>
     </div>
-  </div>
+  </div> -->
 
   <div class="min-h-screen bg-gray-100 flex items-center justify-center">
     <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md space-y-4">
       <h1 class="text-2xl font-bold">TO-DO LIST</h1>
+      <p class="text-sm text-gray-600">剩余未完成任务:
+        <span class="font-bold">{{todos.length}}</span></p>
       <div class="flex gap-2">
         <input class="flex-1 border rounded px-2 py-1" v-model="newToDo" 
         @keyup.enter="addToDo"
@@ -64,12 +70,13 @@ function toggleTodo(todo:ToDo){
         <button @click="addToDo" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">add</button>
       </div>
 
-      <ul class="space-y-2">
+      <ul class="">
         <li v-for="todo in todos"
         :key="todo.id"
         @click="toggleTodo(todo)"
-        class="cursor-pointer">
-        <span :class="{'line-through text-gray-400': todo.done}">{{todo.title}}</span>
+        class="cursor-pointer flex justify-between items-center p-2 bg-gray-50 rounded hover:bg-gray-100">
+          <span :class="{'line-through text-gray-400': todo.done}">{{todo.title}}</span>
+          <button class="text-red-500 hover:text-red-700" @click="del(todo.id)">Del</button>
         </li>
       </ul>
     </div>
