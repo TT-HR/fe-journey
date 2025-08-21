@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch, onMounted } from "vue";
+import { ref, watch, onMounted, computed } from "vue";
 import TodoItem from "./components/TodoItem.vue";
 
 // todolist
@@ -10,6 +10,8 @@ interface ToDo {
 }
 
 const todos = ref<ToDo[]>([]);
+const finishTodo = computed(() => todos.value.filter((e) => e.done === false));
+const todoing = computed(() => todos.value.filter((e) => e.done === true));
 
 const newToDo = ref("");
 
@@ -48,7 +50,7 @@ function deleteTodo(id: number) {
   todos.value = todos.value.filter((e) => e.id !== id);
 }
 
-function updateTodo({id,title}:ToDo) {
+function updateTodo({ id, title }: ToDo) {
   const fondTodo = todos.value.find((e) => e.id === id);
   if (fondTodo)
     fondTodo.title = title
@@ -61,9 +63,7 @@ function updateTodo({id,title}:ToDo) {
   <div class="min-h-screen bg-gray-100 flex items-center justify-center">
     <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md space-y-4">
       <h1 class="text-2xl font-bold">TO-DO LIST</h1>
-      <p class="text-sm text-gray-600">
-        剩余未完成任务: <span class="font-bold">{{ todos.length }}</span>
-      </p>
+
       <div class="flex gap-2">
         <input class="flex-1 border rounded px-2 py-1" v-model="newToDo" @keyup.enter="addToDo" placeholder="请输入任务" />
         <button @click="addToDo" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
@@ -72,8 +72,20 @@ function updateTodo({id,title}:ToDo) {
       </div>
 
       <ul>
-        <TodoItem v-for="todo in todos" :key="todo.id" :todo="todo" @delete="deleteTodo" @toggle="toggleTodo" @updateTodo="updateTodo"/>
+        <TodoItem v-for="todo in todos" :key="todo.id" :todo="todo" @delete="deleteTodo" @toggle="toggleTodo"
+          @updateTodo="updateTodo" />
       </ul>
+      <div class="">
+        <span class="text-sm text-gray-600">
+          总任务数: <span class="font-bold">{{ todos.length }}</span>
+        </span>
+        <span class="text-sm text-gray-600">
+          已完成数: <span class="font-bold">{{ finishTodo.length }}</span>
+        </span>
+        <span class="text-sm text-gray-600">
+          未完成数: <span class="font-bold">{{ todoing.length }}</span>
+        </span>
+      </div>
     </div>
 
 
