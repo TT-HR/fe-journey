@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref , nextTick} from 'vue'
 const props = defineProps({
     todo: {
         type: Object,
@@ -11,10 +11,14 @@ const emit = defineEmits(['delete', 'toggle', 'updateTodo'])
 
 const isEdit = ref(false)
 const editText = ref('')
+const inputRef = ref<HTMLInputElement | null>(null)
 
 function startEdit() {
     isEdit.value = true
     editText.value = props.todo.title
+    nextTick(()=> {
+        inputRef.value?.focus()
+    })
 }
 
 function saveEdit() {
@@ -30,7 +34,7 @@ function saveEdit() {
         <span v-if="!isEdit" :class="{ 'line-through text-gray-400': todo.done }" class="flex-1 cursor-pointer"
             @click="$emit('toggle', todo.id)" @dblclick="startEdit">{{ todo.title }}
         </span>
-        <input v-else v-model="editText" @keyup.enter="saveEdit" @blur="saveEdit"
+        <input v-else v-model="editText" @keyup.enter="saveEdit" @blur="saveEdit" ref="inputRef"
             class="flex-1 border rounded px-2 py-1" autofocus />
         <button class="text-red-500 hover:text-red-700" @click="$emit('delete', todo.id)">Del</button>
     </li>
