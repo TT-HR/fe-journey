@@ -1,90 +1,84 @@
 <script setup lang="ts">
-import { ref,onMounted } from 'vue';
-
-const count = ref(0);
-const todo = ref('loading...')
-
-function add(){
-  count.value++;
-}
-
-onMounted(async() =>{
-  try{
-    const res = await fetch('https://jsonplaceholder.typicode.com/todos/1')
-    const data = await res.json();
-    todo.value = data.title;
-  }catch (e){
-    todo.value = 'fetch failed'
-  }
-})
+import { ref, watch, onMounted } from "vue";
+import TodoItem from "./components/TodoItem.vue";
 
 // todolist
-interface ToDo{
-  id:number,
-  title:string,
-  done:boolean
+interface ToDo {
+  id: number;
+  title: string;
+  done: boolean;
 }
 
-const todos = ref<ToDo[]>([])
+const todos = ref<ToDo[]>([]);
 
-const newToDo = ref("")
+const newToDo = ref("");
 
-function addToDo(){
-  if(!newToDo.value.trim()) return
+function addToDo() {
+  if (!newToDo.value.trim()) return;
   todos.value.push({
-    id:Date.now(),
-    title:newToDo.value.trim(),
-    done:false,
-  })
-  newToDo.value = ""
-}
-function toggleTodo(todo:ToDo){
-  todo.done = !todo.done
+    id: Date.now(),
+    title: newToDo.value.trim(),
+    done: false,
+  });
+  newToDo.value = "";
 }
 
-function del(id:any){
-  todos.value.splice(todos.value.indexOf(id),1)
+//页面加载时从localStorage读取数据显示
+onMounted(() => {
+  const saved = localStorage.getItem("todos");
+  if (saved) {
+    todos.value = JSON.parse(saved);
+  }
+});
+//localStorage，将数据存入localStorage
+watch(
+  todos,
+  (newVal) => {
+    localStorage.setItem("todos", JSON.stringify(newVal));
+  },
+  { deep: true }
+);
+
+function toggleTodo(id: number) {
+  const todo = todos.value.find((e) => e.id === id);
+  if (todo) todo.done = !todo.done;
+}
+
+function deleteTodo(id: number) {
+  todos.value = todos.value.filter((e) => e.id !== id);
+}
+
+function updateTodo({id,title}:ToDo) {
+  const fondTodo = todos.value.find((e) => e.id === id);
+  if (fondTodo)
+    fondTodo.title = title
 }
 
 </script>
 
 <template>
-  <!-- <div class="min-h-full grid place-items-start bg-gray-50">
-    <div class ="p-6 rounded-2xl shadow-lg bg-white space-y-4 space-y-4 w-full max-w-md">
-      <h1 class ="text-2xl font-bold">Hello Vue 3 + TS + Tailwind</h1>
-      <p class = "text-sm opacity-80">Todo:{{ todo }}</p>
-      <button class ="px-3 py-1 rounded-2xl shadow" @click="add">+1</button>
-      <span class="text-xl font-mono">count:{{count}}</span>
-    </div>
-  </div> -->
 
   <div class="min-h-screen bg-gray-100 flex items-center justify-center">
     <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md space-y-4">
       <h1 class="text-2xl font-bold">TO-DO LIST</h1>
-      <p class="text-sm text-gray-600">剩余未完成任务:
-        <span class="font-bold">{{todos.length}}</span></p>
+      <p class="text-sm text-gray-600">
+        剩余未完成任务: <span class="font-bold">{{ todos.length }}</span>
+      </p>
       <div class="flex gap-2">
-        <input class="flex-1 border rounded px-2 py-1" v-model="newToDo" 
-        @keyup.enter="addToDo"
-        placeholder="请输入任务"></input>
-        <button @click="addToDo" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">add</button>
+        <input class="flex-1 border rounded px-2 py-1" v-model="newToDo" @keyup.enter="addToDo" placeholder="请输入任务" />
+        <button @click="addToDo" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
+          add
+        </button>
       </div>
 
-      <ul class="">
-        <li v-for="todo in todos"
-        :key="todo.id"
-        @click="toggleTodo(todo)"
-        class="cursor-pointer flex justify-between items-center p-2 bg-gray-50 rounded hover:bg-gray-100">
-          <span :class="{'line-through text-gray-400': todo.done}">{{todo.title}}</span>
-          <button class="text-red-500 hover:text-red-700" @click="del(todo.id)">Del</button>
-        </li>
+      <ul>
+        <TodoItem v-for="todo in todos" :key="todo.id" :todo="todo" @delete="deleteTodo" @toggle="toggleTodo" @updateTodo="updateTodo"/>
       </ul>
     </div>
-    
+
 
   </div>
+
 </template>
 
-<style>
-
-</style>
+<style></style>
