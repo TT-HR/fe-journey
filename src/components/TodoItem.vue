@@ -36,6 +36,6 @@ function saveEdit() {
         </span>
         <input v-else v-model="editText" @keyup.enter="saveEdit" @blur="saveEdit" ref="inputRef"
             class="flex-1 border rounded px-2 py-1" autofocus />
-        <button class="text-red-500 hover:text-red-700" @click="$emit('delete', todo.id)">Del</button>
+        <button class="text-red-500 hover:text-red-700" @click="$emit('delete')">Del</button>
     </li>
 </template>

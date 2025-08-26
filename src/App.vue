@@ -53,9 +53,9 @@ watch(
   { deep: true }
 );
 
-function clean(){
+function clean() {
   todos.value = [];
-  localStorage.setItem("todos",JSON.stringify([]))
+  localStorage.setItem("todos", JSON.stringify([]))
 }
 
 function toggleTodo(id: number) {
@@ -63,8 +63,8 @@ function toggleTodo(id: number) {
   if (todo) todo.done = !todo.done;
 }
 
-function deleteTodo(id: number) {
-  todos.value = todos.value.filter((e) => e.id !== id);
+function deleteTodo(index: number) {
+  todos.value.splice(index, 1)
 }
 
 function updateTodo({ id, title }: ToDo) {
@@ -86,8 +86,7 @@ function updateTodo({ id, title }: ToDo) {
           @click="filter = 'completed'">已完成</button>
         <button class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
           @click="filter = 'active'">未完成</button>
-        <button class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-          @click="clean">清空</button>
+        <button class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600" @click="clean">清空</button>
       </div>
 
       <div class="flex gap-2">
@@ -98,11 +97,10 @@ function updateTodo({ id, title }: ToDo) {
         </button>
       </div>
 
-      <ul>
-        <TodoItem v-for="todo in filterDataTodo" :key="todo.id" :todo="todo" @delete="deleteTodo" @toggle="toggleTodo"
-        
-          @updateTodo="updateTodo" />
-      </ul>
+      <transition-group name="fade" tag="ul">
+        <TodoItem v-for="(todo, index) in filterDataTodo" :key="todo.id" :todo="todo" @delete="deleteTodo(index)"
+          @toggle="toggleTodo" @updateTodo="updateTodo" />
+      </transition-group>
       <div class="">
         <span class="text-sm text-gray-600">
           总任务数: <span class="font-bold">{{ todos.length }}</span>
@@ -121,4 +119,24 @@ function updateTodo({ id, title }: ToDo) {
 
 </template>
 
-<style></style>
+<style scoped>
+/* 进入 & 离开 */
+.fade-enter-active, .fade-leave-active {
+  transition: all 1s ease;
+}
+
+/* 初始状态 */
+.fade-enter-from {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+/* 移动动画（当顺序改变时触发） */
+.fade-move {
+  transition: transform 0.4s ease;
+}
+</style>
