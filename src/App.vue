@@ -63,8 +63,9 @@ function toggleTodo(id: number) {
   if (todo) todo.done = !todo.done;
 }
 
-function deleteTodo(index: number) {
-  todos.value.splice(index, 1)
+function deleteTodo(id: number) {
+  // todos.value.splice(index, 1)
+  todos.value = todos.value.filter(todo => todo.id !== id);
 }
 
 function updateTodo({ id, title }: ToDo) {
@@ -80,7 +81,7 @@ function updateTodo({ id, title }: ToDo) {
   <div class="min-h-screen bg-gray-100 flex items-center justify-center">
     <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md space-y-4">
       <h1 class="text-2xl font-bold">TO-DO LIST</h1>
-      <div class="space-x-2">
+      <div class="filters space-x-2">
         <button class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600" @click="filter = 'all'">全部</button>
         <button class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
           @click="filter = 'completed'">已完成</button>
@@ -90,15 +91,14 @@ function updateTodo({ id, title }: ToDo) {
       </div>
 
       <div class="flex gap-2">
-
         <input class="flex-1 border rounded px-2 py-1" v-model="newToDo" @keyup.enter="addToDo" placeholder="请输入任务" />
         <button @click="addToDo" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
           add
         </button>
       </div>
 
-      <transition-group name="fade" tag="ul">
-        <TodoItem v-for="(todo, index) in filterDataTodo" :key="todo.id" :todo="todo" @delete="deleteTodo(index)"
+      <transition-group name="fade" tag="ul" mode="out-in">
+        <TodoItem v-for="todo in filterDataTodo" :key="todo.id" :todo="todo" @delete="deleteTodo(todo.id)"
           @toggle="toggleTodo" @updateTodo="updateTodo" />
       </transition-group>
       <div class="">
@@ -121,7 +121,8 @@ function updateTodo({ id, title }: ToDo) {
 
 <style scoped>
 /* 进入 & 离开 */
-.fade-enter-active, .fade-leave-active {
+.fade-enter-active,
+.fade-leave-active {
   transition: all 1s ease;
 }
 
@@ -130,13 +131,19 @@ function updateTodo({ id, title }: ToDo) {
   opacity: 0;
   transform: translateY(10px);
 }
+
 .fade-leave-to {
   opacity: 0;
   transform: translateY(-10px);
 }
-
-/* 移动动画（当顺序改变时触发） */
-.fade-move {
-  transition: transform 0.4s ease;
+.done {
+  text-decoration: line-through;
+  color: gray;
+}
+.filters {
+  margin-bottom: 10px;
+}
+.filters button {
+  margin-right: 8px;
 }
 </style>
