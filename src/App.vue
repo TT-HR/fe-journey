@@ -100,6 +100,7 @@ function updateTodo({ id, title }: ToDo) {
 
       <ul>
         <TodoItem v-for="todo in filterDataTodo" :key="todo.id" :todo="todo" @delete="deleteTodo" @toggle="toggleTodo"
+        
           @updateTodo="updateTodo" />
       </ul>
       <div class="">
