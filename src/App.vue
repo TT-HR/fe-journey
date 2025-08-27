@@ -1,13 +1,8 @@
 <script setup lang="ts">
-import { ref, watch, onMounted, computed } from "vue";
+import { ref, onMounted, computed } from "vue";
+import { getTodo, addTodo, upTodo, delTodo, type ToDo } from "./api/todo.ts"
 import TodoItem from "./components/TodoItem.vue";
 
-// todolist
-interface ToDo {
-  id: number;
-  title: string;
-  done: boolean;
-}
 
 const todos = ref<ToDo[]>([]);
 const finishTodo = computed(() => todos.value.filter((e) => e.done === false));
@@ -27,31 +22,23 @@ const filterDataTodo = computed(() => {
 
 const newToDo = ref("");
 
-function addToDo() {
-  if (!newToDo.value.trim()) return;
-  todos.value.push({
-    id: Date.now(),
-    title: newToDo.value.trim(),
-    done: false,
-  });
+async function addToDo() {
+  const title = newToDo.value.trim()
+  if (!title) return;
+  const todo: ToDo = { id: Date.now(), title, done: false }
+  // 请求保存接口
+  addTodo(todo)
+  // 刷新列表
+  todos.value = await getTodo()
+
   newToDo.value = "";
 }
 
-//页面加载时从localStorage读取数据显示
-onMounted(() => {
-  const saved = localStorage.getItem("todos");
-  if (saved) {
-    todos.value = JSON.parse(saved);
-  }
+//页面加载时从接口读取数据显示
+onMounted(async () => {
+  todos.value = await getTodo()
 });
-//localStorage，将数据存入localStorage
-watch(
-  todos,
-  (newVal) => {
-    localStorage.setItem("todos", JSON.stringify(newVal));
-  },
-  { deep: true }
-);
+
 
 function clean() {
   todos.value = [];
@@ -63,15 +50,13 @@ function toggleTodo(id: number) {
   if (todo) todo.done = !todo.done;
 }
 
-function deleteTodo(id: number) {
-  // todos.value.splice(index, 1)
-  todos.value = todos.value.filter(todo => todo.id !== id);
+async function deleteTodo(id: number) {
+  await delTodo(id)
 }
 
-function updateTodo({ id, title }: ToDo) {
-  const fondTodo = todos.value.find((e) => e.id === id);
-  if (fondTodo)
-    fondTodo.title = title
+async function updateTodo({id,title}:ToDo) {
+  await upTodo(id, {"title":title})
+  todos.value = await getTodo()
 }
 
 </script>
@@ -98,8 +83,8 @@ function updateTodo({ id, title }: ToDo) {
       </div>
 
       <transition-group name="fade" tag="ul" mode="out-in">
-        <TodoItem v-for="todo in filterDataTodo" :key="todo.id" :todo="todo" @delete="deleteTodo(todo.id)"
-          @toggle="toggleTodo" @updateTodo="updateTodo" />
+        <TodoItem v-for="todo in filterDataTodo" :key="todo.id" :todo="todo" @delete="deleteTodo" @toggle="toggleTodo"
+          @updateTodo="updateTodo" />
       </transition-group>
       <div class="">
         <span class="text-sm text-gray-600">
@@ -136,13 +121,16 @@ function updateTodo({ id, title }: ToDo) {
   opacity: 0;
   transform: translateY(-10px);
 }
+
 .done {
   text-decoration: line-through;
   color: gray;
 }
+
 .filters {
   margin-bottom: 10px;
 }
+
 .filters button {
   margin-right: 8px;
 }
