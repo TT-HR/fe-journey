@@ -52,6 +52,8 @@ function toggleTodo(id: number) {
 
 async function deleteTodo(id: number) {
   await delTodo(id)
+    // 刷新列表
+  todos.value = await getTodo()
 }
 
 async function updateTodo({id,title}:ToDo) {
