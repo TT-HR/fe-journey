@@ -3,27 +3,24 @@ import { ref, computed, onMounted } from "vue";
 import { useTodoStore } from "@/stores/todo"
 import TodoItem from "./components/TodoItem.vue";
 
+const todoStore = useTodoStore()
+
+const finishTodo = computed(() => todoStore.todos.filter((e) => e.done === false));
+const todoing = computed(() => todoStore.todos.filter((e) => e.done === true));
+const filter = ref<'all' | 'completed' | 'active'>('all')
+const todos = computed(() => {
+  if (filter.value === 'completed') {
+    return todoStore.todos.filter((e) => e.done === true);
+  } else if (filter.value === 'active') {
+    return todoStore.todos.filter((e) => e.done === false);
+  } else {
+    return todoStore.todos;
+  }
+})
+
 //加载数据
 onMounted(async () => {
   todoStore.fetchTodos()
-})
-
-const todoStore = useTodoStore()
-
-const todos = todoStore.todos
-const finishTodo = computed(() => todos.filter((e) => e.done === false));
-const todoing = computed(() => todos.filter((e) => e.done === true));
-
-const filter = ref<'all' | 'completed' | 'active'>('all')
-
-const filterDataTodo = computed(() => {
-  if (filter.value === 'completed') {
-    return todos.filter((e) => e.done === true);
-  } else if (filter.value === 'active') {
-    return todos.filter((e) => e.done === false);
-  } else {
-    return todos;
-  }
 })
 
 const newToDo = ref("");
@@ -58,12 +55,12 @@ function clean() {
       </div>
 
       <transition-group name="fade" tag="ul" mode="out-in">
-        <TodoItem v-for="todo in filterDataTodo" :key="todo.id" :todo="todo" @delete="todoStore.delTodo(todo.id)"
+        <TodoItem v-for="todo in todos" :key="todo.id" :todo="todo" @delete="todoStore.delTodo(todo.id)"
           @toggle="todoStore.toggleTodo(todo.id)" @updateTodo="todoStore.upTodo(todo.id, todo.title)" />
       </transition-group>
       <div class="">
         <span class="text-sm text-gray-600">
-          总任务数: <span class="font-bold">{{ todos.length }}</span>
+          总任务数: <span class="font-bold">{{ todoStore.todos.length }}</span>
         </span>
         <span class="text-sm text-gray-600">
           已完成数: <span class="font-bold">{{ finishTodo.length }}</span>

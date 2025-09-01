@@ -1,5 +1,5 @@
 import { ref } from "vue"
-import { getTodos, addTodo, updateTodo, deleteTodo, type Todo } from "@api/http"
+import { getTodos, addToTodo, updateTodo, deleteTodo, type Todo } from "@api/http"
 import { defineStore } from "pinia"
 
 export const useTodoStore = defineStore("todo", () => {
@@ -21,7 +21,7 @@ export const useTodoStore = defineStore("todo", () => {
         if (!title) return;
         const todo: Todo = { id: Date.now(), title, done: false }
         // 请求保存接口
-        addTodo(todo)
+        addToTodo(todo)
         // 刷新列表
         todos.value = await getTodos()
     }

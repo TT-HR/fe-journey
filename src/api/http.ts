@@ -19,7 +19,7 @@ export async function getTodos(): Promise<Todo[]> {
   return z.array(TodoSchema).parse(data.data);
 }
 
-export async function addTodo(todo: Omit<Todo, "id">): Promise<Todo> {
+export async function addToTodo(todo: Omit<Todo, "id">): Promise<Todo> {
   const data = await api.post("/todos", todo);
   return TodoSchema.parse(data);
 }
