@@ -11,7 +11,9 @@
     "dev:all": "concurrently -k -n api,web -c blue,green \"pnpm api\" \"pnpm dev\""
   },
   "dependencies": {
-    "vue": "^3.5.18"
+    "pinia": "^3.0.3",
+    "vue": "^3.5.18",
+    "zod": "^4.1.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.12",

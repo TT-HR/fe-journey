@@ -1,65 +1,37 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from "vue";
-import { getTodo, addTodo, upTodo, delTodo, type ToDo } from "./api/todo.ts"
+import { ref, computed, onMounted } from "vue";
+import { useTodoStore } from "@/stores/todo"
 import TodoItem from "./components/TodoItem.vue";
 
+//加载数据
+onMounted(async () => {
+  todoStore.fetchTodos()
+})
 
-const todos = ref<ToDo[]>([]);
-const finishTodo = computed(() => todos.value.filter((e) => e.done === false));
-const todoing = computed(() => todos.value.filter((e) => e.done === true));
+const todoStore = useTodoStore()
+
+const todos = todoStore.todos
+const finishTodo = computed(() => todos.filter((e) => e.done === false));
+const todoing = computed(() => todos.filter((e) => e.done === true));
 
 const filter = ref<'all' | 'completed' | 'active'>('all')
 
 const filterDataTodo = computed(() => {
   if (filter.value === 'completed') {
-    return todos.value.filter((e) => e.done === true);
+    return todos.filter((e) => e.done === true);
   } else if (filter.value === 'active') {
-    return todos.value.filter((e) => e.done === false);
+    return todos.filter((e) => e.done === false);
   } else {
-    return todos.value;
+    return todos;
   }
 })
 
 const newToDo = ref("");
 
-async function addToDo() {
-  const title = newToDo.value.trim()
-  if (!title) return;
-  const todo: ToDo = { id: Date.now(), title, done: false }
-  // 请求保存接口
-  addTodo(todo)
-  // 刷新列表
-  todos.value = await getTodo()
-
-  newToDo.value = "";
-}
-
-//页面加载时从接口读取数据显示
-onMounted(async () => {
-  todos.value = await getTodo()
-});
-
-
 function clean() {
-  todos.value = [];
-  localStorage.setItem("todos", JSON.stringify([]))
+
 }
 
-function toggleTodo(id: number) {
-  const todo = todos.value.find((e) => e.id === id);
-  if (todo) todo.done = !todo.done;
-}
-
-async function deleteTodo(id: number) {
-  await delTodo(id)
-    // 刷新列表
-  todos.value = await getTodo()
-}
-
-async function updateTodo({id,title}:ToDo) {
-  await upTodo(id, {"title":title})
-  todos.value = await getTodo()
-}
 
 </script>
 
@@ -78,15 +50,16 @@ async function updateTodo({id,title}:ToDo) {
       </div>
 
       <div class="flex gap-2">
-        <input class="flex-1 border rounded px-2 py-1" v-model="newToDo" @keyup.enter="addToDo" placeholder="请输入任务" />
-        <button @click="addToDo" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
-          add
+        <input class="flex-1 border rounded px-2 py-1" v-model="newToDo" @keyup.enter="todoStore.addToDo(newToDo)"
+          placeholder="请输入任务" />
+        <button @click="todoStore.addToDo(newToDo)" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
+          Add
         </button>
       </div>
 
       <transition-group name="fade" tag="ul" mode="out-in">
-        <TodoItem v-for="todo in filterDataTodo" :key="todo.id" :todo="todo" @delete="deleteTodo" @toggle="toggleTodo"
-          @updateTodo="updateTodo" />
+        <TodoItem v-for="todo in filterDataTodo" :key="todo.id" :todo="todo" @delete="todoStore.delTodo(todo.id)"
+          @toggle="todoStore.toggleTodo(todo.id)" @updateTodo="todoStore.upTodo(todo.id, todo.title)" />
       </transition-group>
       <div class="">
         <span class="text-sm text-gray-600">
