@@ -11,8 +11,6 @@ const props = defineProps({
     }
 })
 
-const emit = defineEmits(['delete', 'toggle', 'updateTodo'])
-
 const isEdit = ref(false)
 const editText = ref("")
 const inputRef = ref<HTMLInputElement | null>(null)
