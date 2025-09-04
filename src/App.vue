@@ -5,8 +5,8 @@ import TodoItem from "./components/TodoItem.vue";
 
 const todoStore = useTodoStore()
 
-const finishTodo = computed(() => todoStore.todos.filter((e) => e.done === false));
-const todoing = computed(() => todoStore.todos.filter((e) => e.done === true));
+const finishTodo = computed(() => todoStore.todos.filter((e) => e.done === true));
+const todoing = computed(() => todoStore.todos.filter((e) => e.done === false));
 const filter = ref<'all' | 'completed' | 'active'>('all')
 const todos = computed(() => {
   if (filter.value === 'completed') {
@@ -24,6 +24,14 @@ onMounted(async () => {
 })
 
 const newToDo = ref("");
+
+function clearNewToDo() {
+  if (newToDo.value.trim() === "") {
+    return;
+  }
+  todoStore.addToDo(newToDo.value)
+  newToDo.value = "";
+}
 
 function clean() {
 
@@ -47,14 +55,14 @@ function clean() {
       </div>
 
       <div class="flex gap-2">
-        <input class="flex-1 border rounded px-2 py-1" v-model="newToDo" @keyup.enter="todoStore.addToDo(newToDo)"
+        <input class="flex-1 border rounded px-2 py-1" v-model="newToDo" @keyup.enter="clearNewToDo"
           placeholder="请输入任务" />
-        <button @click="todoStore.addToDo(newToDo)" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
+        <button @click="clearNewToDo" class="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
           Add
         </button>
       </div>
 
-      <transition-group name="fade" tag="ul" mode="out-in">
+      <transition-group name="fade" tag="ul">
         <TodoItem v-for="todo in todos" :key="todo.id" :todo="todo" @delete="todoStore.delTodo(todo.id)"
           @toggle="todoStore.toggleTodo(todo.id)" @updateTodo="todoStore.upTodo(todo.id, todo.title)" />
       </transition-group>
@@ -78,22 +86,21 @@ function clean() {
 
 <style scoped>
 /* 进入 & 离开 */
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 1s ease;
+:deep(.fade-enter-active),
+:deep(.fade-leave-active) {
+  transition: all 0.5s ease;
 }
-
-/* 初始状态 */
-.fade-enter-from {
+:deep(.fade-enter-from) {
   opacity: 0;
   transform: translateY(10px);
 }
-
-.fade-leave-to {
+:deep(.fade-leave-to) {
   opacity: 0;
   transform: translateY(-10px);
 }
-
+:deep(.fade-leave-active) {
+  position: absolute; /* 避免塌陷抖动 */
+}
 .done {
   text-decoration: line-through;
   color: gray;

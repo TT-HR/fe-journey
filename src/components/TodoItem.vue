@@ -34,8 +34,8 @@ function saveEdit() {
 </script>
 
 <template>
-    <div v-if="todoStore.loading">加载中...</div>
     <li class="cursor-pointer flex justify-between items-center p-2 bg-gray-50 rounded hover:bg-gray-100">
+        <span v-if="todoStore.loading">加载中...</span>
         <span v-if="!isEdit" :class="{ 'line-through text-gray-400': todo.done }" class="flex-1 cursor-pointer"
             @click="todoStore.toggleTodo(todo.id)" @dblclick="startEdit">{{ todo.title }}
         </span>

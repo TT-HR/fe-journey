@@ -22,7 +22,7 @@ api.interceptors.response.use(
     },
     (error)=>{
         console.log("请求错误",error)
-        alert("网络错误，请稍后重试")
+        alert("操作失败，请稍后重试")
         return Promise.reject(error)
     }
 )
