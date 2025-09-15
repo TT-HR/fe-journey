@@ -9,13 +9,17 @@ const finishTodo = computed(() => todoStore.todos.filter((e) => e.done === true)
 const todoing = computed(() => todoStore.todos.filter((e) => e.done === false));
 const filter = ref<'all' | 'completed' | 'active'>('all')
 const todos = computed(() => {
+    let list =  todoStore.todos
+
   if (filter.value === 'completed') {
-    return todoStore.todos.filter((e) => e.done === true);
+    list = list.filter(e => e.done === true);
   } else if (filter.value === 'active') {
-    return todoStore.todos.filter((e) => e.done === false);
-  } else {
-    return todoStore.todos;
+    list = list.filter(e => e.done === false);
+  } 
+  if(searchText){
+    list= list.filter((e) => e.title.toLowerCase().includes(searchText.value.toLowerCase()))
   }
+  return list
 })
 
 //加载数据
