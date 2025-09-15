@@ -9,15 +9,15 @@ const finishTodo = computed(() => todoStore.todos.filter((e) => e.done === true)
 const todoing = computed(() => todoStore.todos.filter((e) => e.done === false));
 const filter = ref<'all' | 'completed' | 'active'>('all')
 const todos = computed(() => {
-    let list =  todoStore.todos
+  let list = todoStore.todos
 
   if (filter.value === 'completed') {
     list = list.filter(e => e.done === true);
   } else if (filter.value === 'active') {
     list = list.filter(e => e.done === false);
-  } 
-  if(searchText){
-    list= list.filter((e) => e.title.toLowerCase().includes(searchText.value.toLowerCase()))
+  }
+  if (searchText) {
+    list = list.filter((e) => e.title.toLowerCase().includes(searchText.value.toLowerCase()))
   }
   return list
 })
@@ -38,7 +38,9 @@ function clearNewToDo() {
 }
 
 function clean() {
-
+  todoStore.todos.forEach(todo => {
+    todoStore.delTodo(todo.id)
+  })
 }
 
 const searchText = ref("");
