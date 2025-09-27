@@ -98,8 +98,8 @@ function searchEdit() {
 
   <div class="min-h-screen bg-gray-100 flex items-center justify-center">
     <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-md space-y-4">
-      <h1 class="text-2xl font-bold">TO-DO LIST</h1>
-      <div class="filters flex items-center">
+      <h1 class="text-2xl font-bold font-eng">TO-DO LIST</h1>
+      <div class="filters flex items-center font-cn">
         <button v-if="!isSearch"
           class="px-3 py-1 bg-blue-500 text-white rounded border border-transparent hover:border-blue-600 hover:bg-blue-600"
           @click="filter = 'all'">全部</button>
@@ -125,7 +125,7 @@ function searchEdit() {
         </button>
       </div>
 
-      <div class="flex gap-2">
+      <div class="flex gap-2 font-cn">
         <input class="flex-1 border rounded px-2 py-1" v-model="newToDo" @keyup.enter="clearNewToDo"
           placeholder="请输入任务" />
         <button @click="clearNewToDo"

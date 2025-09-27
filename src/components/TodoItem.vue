@@ -32,13 +32,13 @@ function saveEdit() {
 </script>
 
 <template>
-    <li class="cursor-pointer flex justify-between items-center p-2 bg-gray-50 rounded hover:bg-gray-100">
+    <li class="cursor-pointer flex justify-between items-center p-2 font-cn bg-gray-50 rounded hover:bg-gray-100">
         <span v-if="todoStore.loading">加载中...</span>
         <span v-if="!isEdit" :class="{ 'line-through text-gray-400': todo.done }" class="flex-1 cursor-pointer"
             @click="todoStore.toggleTodo(todo.id)" @dblclick="startEdit">{{ todo.title }}
         </span>
         <input v-else v-model="editText" @keyup.enter="saveEdit" @blur="saveEdit" ref="inputRef"
             class="flex-1 border rounded px-2 py-1" autofocus />
-        <button class="text-red-500 hover:text-red-700" @click="todoStore.delTodo(todo.id)">删除</button>
+        <button class="text-red-400 hover:text-red-800 font-bold text-sm" @click="todoStore.delTodo(todo.id)">删除</button>
     </li>
 </template>

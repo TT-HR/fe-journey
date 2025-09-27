@@ -4,14 +4,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"roboto"', 'ui-sans-serif', 'system-ui'],  // 默认无衬线字体
-        serif: ['"Georgia"', 'ui-serif', 'serif'],        // 默认衬线字体
-        mono: ['"Fira Code"', 'ui-monospace', 'monospace']
-      },
-      colors: {
-        text: {
-          DEFAULT: '#4A5568', // 柔和深灰色，代替黑色
-        }
+        cn: ['"Noto Sans SC"', 'ui-sans-serif', 'system-ui'],//中文
+        eng: ['"Rubik"', 'ui-sans-serif', 'system-ui'], //英文
       }
     },
   },
